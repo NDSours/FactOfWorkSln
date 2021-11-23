@@ -1,0 +1,213 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@model PersonCRUDModel
+
+<partial name="_Validation"/>
+<div class="row">
+<h5 class="bg-@Model.Theme text-white text-center p-2">@Model.GetNameTitile()</h5>
+    <div class="d-flex justify-content-center align-items-center text-center container">
+        <form asp-action="@Model.Action" method="post" style="width:50%">
+            <input type="hidden" asp-for="Person.Id" value="@Model.Person.Id" />
+            <input type="hidden" asp-for="Person.FileId" value="@Model.Person.FileId"/>
+            <div class="list-group">
+                <label class="fw-bold" asp-for="Person.NumberArea">Номер района:</label>
+                <select class="form-select text-center" asp-for="Person.NumberArea" disabled="@Model.ReadOnly">
+                    @for (int i = 1; i <= 22; i++)
+                    {
+                        if (i == 1)
+                        {
+                            <option selected="selected">@i.ToString()</option>
+                        }
+                        else
+                        {
+                            <option>@i.ToString()</option>
+                        }
+                       
+                    }
+                </select>
+            </div>
+            <div class="list-group">
+                <label class="fw-bold" asp-for="Person.Surname">Фамилия:</label>
+                <div><span asp-validation-for="Person.Surname" class="text-danger"></span></div>
+                <input class="form-control text-center" asp-for="Person.Surname" readonly="@Model.ReadOnly" />
+            </div>
+
+            <div class="list-group">
+                <label class="fw-bold" asp-for="Person.Name">Имя:</label>
+                <div><span asp-validation-for="Person.Name" class="text-danger"></span></div>
+                <input class="form-control text-center" asp-for="Person.Name" readonly="@Model.ReadOnly" />
+            </div>
+
+            <div class="list-group">
+                <label class="fw-bold" asp-for="Person.Patr">Отчество:</label>
+                <input class="form-control text-center" asp-for="Person.Patr" readonly="@Model.ReadOnly" />
+            </div>
+
+            <div class="list-group">
+                <label class="fw-bold" asp-for="Person.Snils">СНИЛС:</label>
+                <div><span asp-validation-for="Person.Snils" class="text-danger"></span></div>
+                <input class="form-control text-center" asp-for="Person.Snils" readonly="@Model.ReadOnly" />
+            </div>
+
+            <div class="list-group">
+                <label class="fw-bold" asp-for="Person.Category">Категория:</label>
+                <input class="form-control text-center" asp-for="Person.Category" readonly="@Model.ReadOnly" />
+            </div>
+
+            <div class="list-group">
+                <div class="row">
+                    <div class="col p-3 m-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Person.HaveOverPayments" disabled="@Model.ReadOnly">
+                            <label class="form-check-label" asp-for="Person.HaveOverPayments">Наличие переплаты</label>
+                        </div>
+                    </div>
+                    <div class="col p-3 m-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Person.HaveWorkBook" disabled="@Model.ReadOnly">
+                            <label class="form-check-label" asp-for="Person.HaveWorkBook">Наличие эл. т.к. </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group">
+                <div class="row p-1 m-1">
+                    <div class="col">
+                        <label class="fw-bold" asp-for="Person.Pay_Month">Выплатной месяц:</label>
+                        <select class="form-select text-center" asp-for="Person.Pay_Month" disabled="@Model.ReadOnly">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                if (i == @Model.Person.Pay_Month)
+                                {
+                                    <option selected="selected">@i.ToString()</option>
+                                }
+                                else
+                                {
+                                    <option>@i.ToString()</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="fw-bold" asp-for="Person.Pay_Year">Выплатной год:</label>
+                        <select class="form-select text-center" asp-for="Person.Pay_Year" disabled="@Model.ReadOnly">
+                            @foreach (var item in MyDateUtils.GetRangeYear())
+                            {
+                                if (item == @Model.Person.Pay_Year)
+                                {
+                                    <option selected="selected">@item.ToString()</option>
+                                }
+                                else
+                                {
+                                    <option>@item.ToString()</option>
+                                }
+
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group">
+                <div class="row p-1 m-1">
+                    <div class="col">
+                        <label class="fw-bold" asp-for="Person.Report_Month">Отчетный месяц:</label>
+                        <select class="form-select text-center" asp-for="Person.Report_Month" disabled="@Model.ReadOnly">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                if (i == @Model.Person.Report_Month)
+                                {
+                                    <option selected="selected">@i.ToString()</option>
+                                }
+                                else
+                                {
+                                    <option>@i.ToString()</option>
+                                }
+                            
+                            }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="fw-bold" asp-for="Person.Report_Year">Отчетный год:</label>
+                        <select class="form-select text-center" asp-for="Person.Report_Year" disabled="@Model.ReadOnly">
+                            @foreach (var item in MyDateUtils.GetRangeYear())
+                            {
+                                if (item == @Model.Person.Report_Year)
+                                {
+                                    <option selected="selected">@item.ToString()</option>
+                                }
+                                else
+                                {
+                                    <option>@item.ToString()</option>
+                                }
+                               
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <br />
+            @if (Model.ShowAction)
+            {
+                <button class="btn btn-@Model.Theme" type="submit">@Model.GetNameButton()</button>
+            }
+            <a class="btn btn-secondary" asp-action="Index">Вернуться</a>
+        </form>
+        <br/><br/>
+    </div>
+    
+    @if (@Model.ShowZaproses)
+    {
+        <hr class="bg-danger border-2 border-top border-danger">
+        <h5 class="bg-@Model.Theme text-white text-center p-2">Список запросов</h5>
+        <div class="row">
+            @if (Model.Person.Zaproses.Any())
+            {
+                <div class="row tablecontainer">
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th>Дата запроса</th>
+                                <th>Дата ответа</th>
+                                <th>Рег.№ орг.</th>
+                                <th>Наименование орг.</th>
+                                <th>Адрес организации</th>
+                                <th>Номер протокола</th>
+                                <th>Дата протокола</th>
+                                <th>Примечание</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var z in Model.Person.Zaproses)
+                            {
+                                <tr>
+                                    <td>@z.DataQuery.ToString("dd.MM.yyyy")</td>
+                                    <td>@(z.DataResponse.GetValueOrDefault() == DateTime.MinValue ? "Нет" : z.DataResponse.GetValueOrDefault().ToString("dd.MM.yyyy"))</td>
+                                    <td>@z.RegNumberOrganization</td>
+                                    <td>@z.NameOrganization</td>
+                                    <td>@z.AddressOrganization</td>
+                                    <td>@z.NumberProtocol</td>
+                                    <td>@z.DateProtocol.ToString("dd.MM.yyyy")</td>
+                                    <td>@z.Note</td>
+                                    <td><a class="btn btn-info" asp-page="/editzapros" asp-route-idzapros="@z.Id">Редактировать</a></td>
+                                    <td><a class="btn btn-danger" asp-page="/deletezapros" asp-route-idzapros="@z.Id"/>Удалить</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {<span class="text-center fw-bold">нет данных</span>}
+        <div class="d-inline-block">
+            <br />
+            @if (Model.Action != "Delete")
+            {
+                <a class="btn btn-@Model.Theme" asp-page="/createzapros" asp-route-personid="@Model.Person.Id">Создать запрос</a>
+            }
+        </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,59 @@
+﻿@model ZaprosViewModel
+<partial name="_Validation"/>
+<h5 class="bg-@Model.Theme text-white text-center p-2">@Model.GetNameTitile()</h5>
+<div class="d-flex justify-content-center align-items-center text-center container">
+    <form asp-page="@Model.Action" method="post" style="width: 50%">
+        <input type="hidden" asp-for="Zapros.PersonId" value="@Model.PersonId" />
+        <input type="hidden" asp-for="Zapros.Id" value="@Model.Zapros.Id" />
+        <div class="list-group">
+            <label class="fw-bold" asp-for="Zapros.DataQuery">Дата запроса:</label>
+            @Html.EditorFor(model => model.Zapros.DataQuery, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.DataResponse.GetValueOrDefault().Date, "Дата ответа:", new { @class = "fw-bold" })
+            @Html.EditorFor(model => model.Zapros.DataResponse, "DateOnly", new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.RegNumberOrganization, "Рег. номер организации:", new { @class = "fw-bold" })
+            @Html.EditorFor(model => model.Zapros.RegNumberOrganization, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.NameOrganization, "Наименование организации:", new { @class = "fw-bold" })
+            @Html.EditorFor(model => model.Zapros.NameOrganization, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.AddressOrganization, "Адресс организации:", new { @class = "fw-bold" })
+            @Html.EditorFor(model => model.Zapros.AddressOrganization, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.NumberProtocol, "Номер протокола:", new { @class = "fw-bold" })
+            @Html.EditorFor(model => model.Zapros.NumberProtocol, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.DateProtocol, "Дата протокола:", new { @class = "fw-bold" })
+            @Html.EditorFor(model => model.Zapros.DateProtocol, new { htmlAttributes = new { @class = "form-control text-center", @value = DateTime.Now.ToString("yyyy-MM-dd") } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.Note, "Примечание:", new { @class = "fw-bold" })
+            @Html.TextAreaFor(model => model.Zapros.Note, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(model => model.Zapros.UserNameModify, "Пользователь:", new { @class = "fw-bold" })
+            @Html.EditorFor(model => model.Zapros.UserNameModify, new { htmlAttributes = new { @class = "form-control text-center", @disabled = "true" } })
+        </div>
+        <br />
+
+        <button class="btn btn-@Model.Theme" type="submit">@Model.GetNameButton()</button>
+        <a class="btn btn-secondary" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.PersonId">Вернуться</a>
+    </form>
+</div>
+@if (@Model.Action != "createzapros")
+{
+    <script type="text/javascript">
+        $(function () {
+            $('#Zapros_DataQuery').val('@Model.Zapros.DataQuery.ToString("yyyy-MM-dd")');
+            $('#Zapros_DataResponse').val('@Model.Zapros.DataResponse.GetValueOrDefault().ToString("yyyy-MM-dd")');
+            $('#Zapros_DateProtocol').val('@Model.Zapros.DateProtocol.ToString("yyyy-MM-dd")');
+        });
+    </script>
+}

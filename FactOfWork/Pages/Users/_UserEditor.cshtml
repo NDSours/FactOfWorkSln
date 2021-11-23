@@ -1,0 +1,37 @@
+﻿@model UserPageModel
+<div class="d-flex justify-content-center align-items-center text-center container">
+    <form method="post" style="width: 60%">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.UserName, "Имя пользователя:")
+            @Html.EditorFor(m => m.UserName, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.Surname, "Фамилия пользователя:")
+            @Html.EditorFor(m => m.Surname, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.Name, "Имя пользователя:")
+            @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.Patr, "Отчество пользователя:")
+            @Html.EditorFor(m => m.Patr, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.Position, "Должность:")
+            @Html.EditorFor(m => m.Position, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.Department, "Отдел:")
+            @Html.EditorFor(m => m.Department, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.Password, "Пароль:")
+            @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <br />
+        <button type="submit" class="btn btn-info">Сохранить</button>
+        <a class="btn btn-secondary" asp-page="/Users/List">Назад</a>
+    </form>
+</div>

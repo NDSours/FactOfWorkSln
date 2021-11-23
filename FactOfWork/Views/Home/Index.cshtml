@@ -1,0 +1,167 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using NPOI.SS.Formula.Functions
+@model PersonsListViewModel
+<form method="get">
+    <div class="row">
+        <div class="col">
+            <label class="text-start">Район: </label>
+        </div>
+        <div class="col">
+            <label class="text-start">Месяц(Отчетный):</label>
+        </div>
+        <div class="col">
+            <label class="text-start">Год(Отчетный):</label>
+        </div>
+        <div class="col">
+            <label class="text-start">Архивные данные</label>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            @Html.DropDownList("Area", Model.Area as SelectList,
+                htmlAttributes: new { @class = "form-control" })
+        </div>
+        <div class="col">
+            @Html.DropDownList("Month", Model.Month as SelectList,
+                htmlAttributes: new { @class = "form-control" })
+        </div>
+        <div class="col">
+            @Html.DropDownList("Year", Model.Year as SelectList,
+                htmlAttributes: new { @class = "form-control"})
+        </div>
+        <div class="col">
+            <input class="form-check-input" type="checkbox" asp-for="@Model.Arhive"/>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            <label class="text-start">СНИЛС: </label>
+        </div>
+        <div class="col">
+            <label class="text-start">Фамилия:</label>
+        </div>
+        <div class="col">
+            <label class="text-start">Категория:</label>
+        </div>
+        <div class="col"></div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            <input class="form-control" asp-for="Snils" width="150" placeholder="123-456-789 00"/>
+        </div>
+        <div class="col">
+            <input class="form-control" asp-for="Surname" placeholder="Иванов"/>
+        </div>
+        <div class="col">
+            <input class="form-control" asp-for="Category" placeholder="25"/>
+        </div>
+        <div class="col">
+            <input type="submit" value="Найти" class="btn btn-outline-secondary"/>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Сбросить</a>
+        </div>
+    </div>
+</form>
+<br/>
+<br/>
+<div class="m-1 p-1">
+    <a class="btn btn-secondary" onClick="javascript:CallPrint('print-content');" title="Печать">Распечатать</a>
+</div>
+
+<div class="container-fluid">
+    @if (Model.Persons.Count() == 0)
+    {
+        <h4>Нет данных</h4>
+    }
+    else
+    {
+        <div class="row tablecontainer">
+            <table class="table table-striped text-center">
+                <thead>
+                <tr>
+                    <th>Район</th>
+                    <th>Ф.И.О.</th>
+                    <th>СНИЛС</th>
+                    <th>Категория</th>
+                    <th>Наличие переплаты</th>
+                    <th>Наличие эл. ТК</th>
+                    <th>Год</th>
+                    <th>Месяц (Отчетный)</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var p in Model.Persons)
+                {
+                    <tr>
+                        <td>@p.NumberArea.ToString()</td>
+                        <td>@p.ToString()</td>
+                        <td nowrap="nowrap">@p.Snils</td>
+                        <td>@p.Category</td>
+                        <td>@(p.HaveOverPayments ? "Есть" : "Нет")</td>
+                        <td>@(p.HaveWorkBook ? "Есть" : "Нет")</td>
+                        <td>@p.Report_Year.ToString()</td>
+                        <td>@p.Report_Month.ToString()</td>
+                        <td><a class="btn btn-info" asp-action="Edit" asp-route-Id="@p.Id">Открыть</a></td>
+                        <td><a class="btn btn-danger" asp-action="Delete" asp-route-Id="@p.Id">Удалить</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    <a asp-action="Create" class="btn btn-primary">Создать</a>
+</div>
+
+<div hidden="true">
+<div id="print-content">
+    <h3 class="text-center">Факт работы, журнал</h3>
+        <table style="text-align: center;">
+            <thead>
+            <tr>
+                <th>Район</th>
+                <th>Ф.И.О.</th>
+                <th>СНИЛС</th>
+                <th>Категория</th>
+                <th>Наличие переплаты</th>
+                <th>Наличие эл. ТК</th>
+                <th>Год</th>
+                <th>Месяц (Отчетный)</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var p in Model.Persons)
+            {
+                <tr>
+                    <td>@p.NumberArea.ToString()</td>
+                    <td>@p.ToString()</td>
+                    <td nowrap="nowrap">@p.Snils</td>
+                    <td>@p.Category</td>
+                    <td>@(p.HaveOverPayments ? "Есть" : "Нет")</td>
+                    <td>@(p.HaveWorkBook ? "Есть" : "Нет")</td>
+                    <td>@p.Report_Year.ToString()</td>
+                    <td>@p.Report_Month.ToString()</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function CallPrint(strid) {
+        var prtContent = document.getElementById(strid);
+        var WinPrint = window.open('','','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+        WinPrint.document.write('');
+        WinPrint.document.write(prtContent.innerHTML);
+        WinPrint.document.write('');
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+        prtContent.innerHTML=strOldOne;
+    }
+</script>

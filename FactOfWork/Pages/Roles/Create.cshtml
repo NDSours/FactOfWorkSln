@@ -1,0 +1,35 @@
+﻿@page
+@model CreateModel
+
+<partial name="_RoleEditor" model="@Model"/>
+
+@functions
+{
+    [Authorize(Roles = "Администратор")]
+    public class CreateModel : RolePageModel
+    {
+        public RoleManager<IdentityRole> RoleManager;
+
+        public CreateModel(RoleManager<IdentityRole> roleManager)
+        {
+            RoleManager = roleManager;
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (ModelState.IsValid)
+            {
+                IdentityRole role = new IdentityRole {Name = Name};
+                IdentityResult result = await RoleManager.CreateAsync(role);
+                if (result.Succeeded)
+                {
+                    return RedirectToPage("/Roles/List");
+                }
+                foreach(IdentityError err in result.Errors)
+                    ModelState.AddModelError("",err.Description);
+            }
+            return Page();
+        }
+
+    }
+}

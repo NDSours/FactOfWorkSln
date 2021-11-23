@@ -1,0 +1,64 @@
+﻿@model LoadingFilesViewModel
+<div class="bg-primary text-white text-center p-2">
+    <span class="navbar-brand ml-1">Загрузка файлов</span>
+</div>
+<form asp-action="AddFile" asp-controller="File" method="post" enctype="multipart/form-data">
+    <div class="row m-1">
+        <div class="col text-start">
+            <input class="form-control btn btn-outline-primary" type="file" name="uploadedFile"/>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <span class="navbar-brand">Выплатной период:</span>
+            </div>
+            <div class="col">
+                <span class="navbar-brand">Отчетный период:</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span>Месяц:</span>
+            </div>
+            <div class="col">
+                <span>Месяц:</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                @Html.DropDownList("PayMonth", Model.PayMonth as SelectList,
+                    htmlAttributes: new { @class = "form-select text-center",@style="width:100px" })
+            </div>
+            <div class="col">
+                @Html.DropDownList("ReportMonth", Model.ReportMonth as SelectList,
+                    htmlAttributes: new { @class = "form-select text-center", @style = "width:100px" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span>Год:</span>
+            </div>
+            <div class="col">
+                <span>Год:</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                @Html.DropDownList("PayYear", Model.PayYear as SelectList,
+                    htmlAttributes: new { @class = "form-select text-center", @style = "width:130px" })
+            </div>
+            <div class="col">
+                @Html.DropDownList("ReportYear", Model.ReportYear as SelectList,
+                    htmlAttributes: new { @class = "form-select text-center", @style = "width:130px" })
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="row p-3 m-1">
+        <div class="col text-center">
+            <input class="btn btn-outline-primary" type="submit" value="Загрузить"/>
+        </div>
+    </div>
+</form>

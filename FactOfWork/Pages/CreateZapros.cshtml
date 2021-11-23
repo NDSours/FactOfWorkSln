@@ -1,0 +1,50 @@
+﻿@page "/pages/createzapros/{personid}"
+@model CreateModel
+<div class="m-2">
+    <partial name="_ZaprosEditor" model="@Model.ViewModel"/>
+</div>
+@functions
+{
+    [Authorize(Roles = "Администратор,Специалист") ]
+    public class CreateModel : PageModel
+    {
+        private SqlDbContext _context { get; set; }
+        private UserManager<AppUser> UserManager;
+        public ZaprosViewModel ViewModel { get; set; }
+
+        public CreateModel(SqlDbContext cxt, UserManager<AppUser> umanager)
+        {
+            _context = cxt;
+            UserManager = umanager;
+        }
+
+        public void OnGet(long personid)
+        {
+            ViewModel = new ZaprosViewModel()
+            {
+                Zapros = new Zapros{DataResponse = DateTime.MinValue},
+                PersonId = personid
+            };
+        }
+
+        public async Task<IActionResult> OnPostAsync([FromForm] Zapros zapros)
+        {
+            AppUser u = await UserManager.FindByNameAsync(User.Identity.Name);
+            if (ModelState.IsValid)
+            {
+                zapros.Person = default;
+                zapros.UserNameModify = u.UserName;
+                _context.Zaproses.Add(zapros);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Edit", "Home", new {Id = zapros.PersonId});
+            }
+            ViewModel = new ZaprosViewModel()
+            {
+                Zapros = zapros,
+                PersonId = zapros.PersonId,
+                Action = "createzapros"
+            };
+            return Page();
+        }
+    }
+}

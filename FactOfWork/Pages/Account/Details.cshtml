@@ -1,0 +1,39 @@
+﻿@page
+@model DetailsModel
+
+<table class="table table-sm table-bordered">
+    <tbody>
+    @if (Model.AppUser == null)
+    {
+        <tr>
+            <th class="text-center">Пользователь не авторизован</th>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <th>Имя пользователя</th>
+            <td class="text-break">@Model.AppUser.UserName</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a class="btn btn-secondary" asp-controller="Home" asp-action="Index">На главную</a>
+
+@functions{
+
+    public class DetailsModel : AccountRights
+    {
+        private UserManager<AppUser> UserManager;
+        public DetailsModel(UserManager<AppUser> userManager) => UserManager = userManager;
+
+        public AppUser AppUser { get; set; }
+
+        public async Task OnGetAsync()
+        {
+            if (User.Identity.IsAuthenticated)
+                AppUser = await UserManager.FindByNameAsync(User.Identity.Name);
+        }
+    }
+
+}

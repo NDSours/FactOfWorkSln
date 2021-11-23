@@ -1,0 +1,56 @@
+﻿@page "{id}"
+@model EditModel
+
+<partial name="_UserEditor" model="@Model"/>
+
+@functions{
+    [Authorize(Roles = "Администратор")]
+    public class EditModel : UserPageModel
+    {
+        public UserManager<AppUser> UserManager;
+        public EditModel(UserManager<AppUser> userManager) => UserManager = userManager;
+
+        public async Task OnGetAsync(string id)
+        {
+            AppUser user = await UserManager.FindByIdAsync(id);
+            Id = user.Id;
+            UserName = user.UserName;
+            Surname = user.Surname;
+            Name = user.Name;
+            Patr = user.Patr;
+            Position = user.Position;
+            Department = user.Department;
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser user = await UserManager.FindByIdAsync(Id);
+                user.UserName = UserName;
+                user.Surname = Surname;
+                user.Name = Name;
+                user.Patr = Patr;
+                user.Position = Position;
+                user.Department = Department;
+                IdentityResult result = await UserManager.UpdateAsync(user);
+                if (result.Succeeded && !String.IsNullOrEmpty(Password))
+                {
+                    await UserManager.RemovePasswordAsync(user);
+                    result = await UserManager.AddPasswordAsync(user, Password);
+                }
+                if (result.Succeeded)
+                {
+                    return RedirectToPage("/Users/List");
+                }
+                foreach (var err in result.Errors)
+                {
+                    ModelState.AddModelError("",err.Description);
+                }
+            }
+            return Page();
+        }
+
+    }
+
+}

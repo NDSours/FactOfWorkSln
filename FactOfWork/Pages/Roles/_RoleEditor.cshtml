@@ -1,0 +1,13 @@
+﻿@model RolePageModel
+    <div class="d-flex justify-content-center align-items-center text-center container">
+    <form method="post" style="width: 60%">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="list-group">
+            @Html.LabelFor(m => m.Name, "Наименование роли: ")
+            @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control text-center" } })
+        </div>
+        <br/>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a class="btn btn-secondary" asp-page="/Roles/List">Вернуться</a>
+    </form>
+    </div>

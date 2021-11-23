@@ -1,0 +1,112 @@
+﻿@page "{id}"
+@model EditorModel
+
+<h5 class="bg-info text-white text-center p-2">Редактирование роли: @Model.Role.Name</h5>
+<form method="post">
+    <input type="hidden" name="rolename" value="@Model.Role.Name"/>
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <h5 class="bg-secondary text-white p-2">Участники роли</h5>
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Пользователь</th>
+            <th>Отдел</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if ((await Model.Members()).Count() == 0)
+        {
+            <tr>
+                <td colspan="3" class="text-center">Нет участников</td>
+            </tr>
+        }
+        @foreach (var user in await Model.Members())
+        {
+            <tr>
+                <td>@user.Name</td>
+                <td>@user.Department</td>
+                <td>
+                    <button asp-route-userid="@user.Id" class="btn btn-primary btn-sm" type="submit">Удалить</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    
+    <h5 class="bg-secondary text-white p-2">Остальные пользователи</h5>
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Пользователь</th>
+                <th>Отдел</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if ((await Model.NonMembers()).Count() == 0)
+            {
+                <tr>
+                    <td colspan="3" class="text-center">Нет пользователей</td>
+                </tr>
+            }
+            @foreach (var user in await Model.NonMembers())
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Department</td>
+                    <td>
+                        <button asp-route-userid="@user.Id" class="btn btn-primary btn-sm" type="submit">Добавить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+<a class="btn btn-secondary" asp-page="/Roles/List">Вернуться</a>
+
+@functions
+{
+    [Authorize(Roles = "Администратор")]
+    public class EditorModel : RolePageModel
+    {
+        public UserManager<AppUser> UserManager;
+        public RoleManager<IdentityRole> RoleManager;
+
+        public EditorModel(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            UserManager = userManager;
+            RoleManager = roleManager;
+        }
+
+        public IdentityRole Role { get; set; }
+        public Task<IList<AppUser>> Members() => UserManager.GetUsersInRoleAsync(Role.Name);
+
+        public async Task<IEnumerable<AppUser>> NonMembers() => UserManager.Users.ToList().Except(await Members());
+
+        public async Task OnGetAsync(string id)
+        {
+            Role = await RoleManager.FindByIdAsync(id);
+        }
+
+        public async Task<IActionResult> OnPostAsync(string userid, string rolename)
+        {
+            Role = await RoleManager.FindByNameAsync(rolename);
+            AppUser user = await UserManager.FindByIdAsync(userid);
+            IdentityResult result;
+
+            if (await UserManager.IsInRoleAsync(user, rolename))
+                result = await UserManager.RemoveFromRoleAsync(user, rolename);
+            else
+                result = await UserManager.AddToRoleAsync(user, rolename);
+
+            if (result.Succeeded)
+                return RedirectToPage();
+            else
+            {
+                foreach(var err in result.Errors)
+                    ModelState.AddModelError("",err.Description);
+                return Page();
+            }
+        }
+
+    }
+}

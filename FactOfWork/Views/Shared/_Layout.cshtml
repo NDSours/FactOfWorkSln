@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" runat="server"/>
+    <link href="~/lib/twitter-bootstrap/css/StyleSheet.css" rel="stylesheet" runat="server" />
+    <link href="~/lib/jqueryui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="lib/datepicker/datepicker.min.css" rel="stylesheet"/>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="lib/datepicker/datepicker.min.js"></script>
+    <title>Факт Работы</title>
+    <script type="text/javascript">
+        $(function () {
+            $('#dialog').dialog({
+                autoOpen: false,
+                buttons: [{text: "OK", click: function() {/* выполнить некоторые действия */}},
+                          {text: "Отмена", click: function() {$(this).dialog("close")}}]
+            });
+
+            $(document).on('click', '.ShowDialogButton', function (e) {
+                $('#dialog').dialog("open")
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="bg-primary text-white p-2">
+        <span class="navbar-brand w-auto">Факт работы</span>
+        <div class="text-end"><span class="navbar-brand text-white">Пользователь: @User.Identity.Name</span><a class="btn btn-outline-danger" asp-page="/Account/Logout">Выход</a></div>
+    </div>
+<div class="container-fluid">
+    <div class="row m-1 p-1">
+        <div id="menu" class="col-2">
+            <vc:navigation-menu/>
+        </div>
+        <div class="col-10">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+</body>
+</html>

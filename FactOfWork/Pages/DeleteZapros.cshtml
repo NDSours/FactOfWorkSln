@@ -1,0 +1,35 @@
+﻿@page "/pages/deletezapros/{idzapros}"
+@model DeleteModel
+<div class="m-2">
+    <partial name="_ZaprosEditor" model="@Model.ViewModel" />
+</div>
+
+@functions
+{
+    [Authorize(Roles = "Администратор,Специалист")]
+    public class DeleteModel : PageModel
+    {
+        private SqlDbContext _context;
+        public ZaprosViewModel ViewModel;
+        public DeleteModel(SqlDbContext ctx) => _context = ctx;
+
+        public async Task OnGetAsync(long idzapros)
+        {
+            Zapros z = await _context.Zaproses.FindAsync(idzapros);
+            ViewModel = new ZaprosViewModel()
+            {
+                Action = "deletezapros",
+                PersonId = z.PersonId,
+                Zapros = z,
+                Theme = "danger"
+            };
+        }
+
+        public async Task<IActionResult> OnPostAsync([FromForm] Zapros zapros)
+        {
+            _context.Zaproses.Remove(zapros);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Edit", "Home", new {Id = zapros.PersonId});
+        }
+    }
+}

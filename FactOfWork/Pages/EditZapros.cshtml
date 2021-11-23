@@ -1,0 +1,50 @@
+﻿@page "/pages/editzapros/{idzapros}"
+@model EditModel
+<div class="m-2">
+    <partial name="_ZaprosEditor" model="@Model.ViewModel"/>
+</div>
+
+@functions{
+    [Authorize(Roles = "Администратор,Специалист")]
+    public class EditModel : PageModel
+    {
+        private SqlDbContext _context;
+        public ZaprosViewModel ViewModel { get; set; }
+
+        public EditModel(SqlDbContext cxt,UserManager<AppUser> umgr )
+        {
+            _context = cxt;
+        }
+
+        public async Task OnGetAsync(long idzapros)
+        {
+            Zapros z = await _context.Zaproses.FindAsync(idzapros);
+            ViewModel = new ZaprosViewModel()
+            {
+                Zapros = z,
+                Action = "editzapros",
+                PersonId = z.PersonId
+            };
+        }
+
+        public async Task<IActionResult> OnPostAsync([FromForm] Zapros zapros)
+        {
+            if (ModelState.IsValid)
+            {
+                zapros.Person = default;
+                zapros.UserNameModify = User.Identity.Name;
+                _context.Zaproses.Update(zapros);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Edit", "Home", new {id = zapros.PersonId});
+            }
+            ViewModel = new ZaprosViewModel()
+            {
+                Zapros = zapros,
+                PersonId = zapros.PersonId,
+                Action = "editzapros"
+            };
+            return Page();
+        }
+    }
+
+}

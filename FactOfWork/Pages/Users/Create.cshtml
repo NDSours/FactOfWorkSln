@@ -1,0 +1,32 @@
+﻿@page
+@model CreateModel
+
+<partial name="_UserEditor" model="@Model"/>
+
+    @functions{
+        [Authorize(Roles = "Администратор")]
+        public class CreateModel : UserPageModel
+        {
+            public UserManager<AppUser> UserManager;
+            public CreateModel(UserManager<AppUser> userManager) => UserManager = userManager;
+
+            public async Task<IActionResult> OnPostAsync()
+            {
+                if (ModelState.IsValid)
+                {
+                    AppUser user = new AppUser { UserName = UserName, Surname = Surname, Name = Name, Patr = Patr, Position = Position, Department = Department };
+                    IdentityResult result = await UserManager.CreateAsync(user, Password);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToPage("List");
+                    }
+                    foreach (IdentityError err in result.Errors)
+                    {
+                        ModelState.AddModelError("", err.Description);
+                    }
+                }
+                return Page();
+            }
+        }
+
+    }
